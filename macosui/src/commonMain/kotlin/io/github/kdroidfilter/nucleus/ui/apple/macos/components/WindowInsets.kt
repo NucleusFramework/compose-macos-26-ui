@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 /**
  * Horizontal inset for the native window controls (traffic lights on macOS).
  *
- * When provided by a platform window composable (e.g. `MacosWindow`), the
+ * When provided by a platform window composable (e.g. `MacosDecoratedWindow`), the
  * [Scaffold] uses this value to pad its built-in sidebar toggle so it doesn't
  * overlap with the native window controls.
  *
@@ -20,7 +20,7 @@ val LocalWindowControlInset = compositionLocalOf { Dp.Unspecified }
 /**
  * Callback to force re-application of native titlebar Auto Layout constraints.
  *
- * Provided by `MacosWindow` when the JNI bridge is available. The [Scaffold]
+ * Provided by `MacosDecoratedWindow` when the JNI bridge is available. The [Scaffold]
  * calls this after sidebar show/hide animations complete to work around macOS
  * occasionally invalidating the titlebar view hierarchy during content relayout.
  *
@@ -31,7 +31,7 @@ val LocalTitleBarRevalidate = compositionLocalOf<(() -> Unit)?> { null }
 /**
  * Modifier that turns a component into a native window drag region.
  *
- * Provided by the platform window composable (e.g. `MacosWindow`, backed by
+ * Provided by the platform window composable (e.g. `MacosDecoratedWindow`, backed by
  * Nucleus' `Modifier.windowDragArea()`): press-and-move starts the native
  * interactive window move, double-click toggles maximize, and interactive
  * children opt out automatically by consuming the press. [TitleBar] applies
@@ -47,7 +47,7 @@ val LocalWindowDragAreaModifier = compositionLocalOf<Modifier> { Modifier }
  * backed by a hosted `NSSplitViewController` — the exact System Settings
  * pattern: the desktop wallpaper shows through, windows behind never do).
  *
- * Provided by the platform window composable (e.g. `MacosWindow`) with the
+ * Provided by the platform window composable (e.g. `MacosDecoratedWindow`) with the
  * requested corner radius; `null` on platforms without native materials —
  * consumers then fall back to the Compose-drawn approximation
  * (`macosGlassMaterial`).
@@ -63,7 +63,7 @@ val LocalSidebarGlassRegionFactory = compositionLocalOf<((Dp) -> Modifier)?> { n
  * surfaces (glass materials, traffic lights, the window background) must
  * follow the app theme rather than the OS setting, hence this upward hop.
  *
- * Provided by `MacosWindow`; `null` when there is no native window to sync.
+ * Provided by `MacosDecoratedWindow`; `null` when there is no native window to sync.
  */
 val LocalNativeWindowSync = compositionLocalOf<((isDark: Boolean, background: Color) -> Unit)?> { null }
 
@@ -72,7 +72,7 @@ val LocalNativeWindowSync = compositionLocalOf<((isDark: Boolean, background: Co
  * the title bar — the minimize / maximize / close buttons on Windows and
  * Linux, which Nucleus draws inside the Compose surface.
  *
- * Provided by the platform window composable (e.g. `MacosWindow`) with the
+ * Provided by the platform window composable (e.g. `MacosDecoratedWindow`) with the
  * measured width of the button strip, so [Scaffold] can keep its toolbar
  * clear of them. Stays [Dp.Unspecified] on macOS, where the controls are
  * native AppKit traffic lights on the leading edge (see

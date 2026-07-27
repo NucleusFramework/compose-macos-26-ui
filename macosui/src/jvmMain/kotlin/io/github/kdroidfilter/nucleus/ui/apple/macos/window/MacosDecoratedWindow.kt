@@ -17,12 +17,14 @@ import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberWindowState
 import dev.nucleusframework.application.DecoratedWindow
 import dev.nucleusframework.application.NucleusApplicationScope
+import dev.nucleusframework.application.NucleusDecoratedWindowScope
 import dev.nucleusframework.window.LocalIsDarkTheme
 import dev.nucleusframework.window.LocalWindowChromeInsets
 import dev.nucleusframework.window.TitleBarPlacement
@@ -48,27 +50,31 @@ import io.github.kdroidfilter.nucleus.ui.apple.macos.util.isApplePlatform
 private val DefaultTitleBarHeight = 52.dp
 
 /**
- * A desktop window that replicates the SwiftUI full-size content window style
- * on macOS, backed by Nucleus' Tao `DecoratedWindow` (no AWT, no bundled JNI):
+ * macOS-styled wrapper for Nucleus' `DecoratedWindow` — the macosui
+ * counterpart of `JewelDecoratedWindow` / `MaterialDecoratedWindow`.
+ *
+ * It replicates the SwiftUI full-size content window style on top of the Tao
+ * backend (no AWT, no bundled JNI):
  * 1. The window is `fullSizeContentView` with a transparent title bar — the
  *    Compose content fills the whole frame.
- * 2. `MacOSStyle.Modern` installs the hidden `NSToolbar` for the macOS 26
- *    corner radius.
+ * 2. The hidden `NSToolbar` is installed for the macOS 26 corner radius.
  * 3. Traffic-light buttons are recentered natively against [titleBarHeight]
- *    (published through Nucleus' `WindowScaffold` overlay slot).
- * 4. The window background color is synced from the theme by Nucleus to
- *    prevent white flashes during resize.
+ *    (published through Nucleus' `WindowScaffold` overlay slot); on Windows
+ *    and Linux the platform window controls are drawn in that same band.
+ * 4. Native surfaces (materials, traffic lights, window background) follow
+ *    the `MacosTheme` rather than the OS appearance.
  *
  * The [Scaffold][io.github.kdroidfilter.nucleus.ui.apple.macos.components.Scaffold]
  * sidebar extends to the top of the window with the traffic lights floating
  * over its header area, exactly like SwiftUI's `NavigationSplitView`.
  *
- * Must be called from a Nucleus Tao application scope
- * (`dev.nucleusframework.window.tao.taoApplication`).
+ * Call it from `dev.nucleusframework.application.nucleusApplication`. The
+ * [content] receives the window scope, so it can reach the window state and
+ * the Nucleus chrome APIs (`WindowBackdrop`, `WindowAppearance`, …).
  */
 @Suppress("FunctionNaming", "LongParameterList")
 @Composable
-fun NucleusApplicationScope.MacosWindow(
+fun NucleusApplicationScope.MacosDecoratedWindow(
     onCloseRequest: () -> Unit,
     state: WindowState = rememberWindowState(),
     visible: Boolean = true,
@@ -78,10 +84,14 @@ fun NucleusApplicationScope.MacosWindow(
     enabled: Boolean = true,
     focusable: Boolean = true,
     alwaysOnTop: Boolean = false,
-    titleBarHeight: Dp = DefaultTitleBarHeight,
+    // Hide this window from the OS taskbar/Dock while it stays visible and
+    // focusable (on Linux effective on X11/XWayland only).
+    hiddenFromDock: Boolean = false,
+    minimumSize: DpSize? = null,
     onPreviewKeyEvent: (KeyEvent) -> Boolean = { false },
     onKeyEvent: (KeyEvent) -> Boolean = { false },
-    content: @Composable () -> Unit,
+    titleBarHeight: Dp = DefaultTitleBarHeight,
+    content: @Composable NucleusDecoratedWindowScope.() -> Unit,
 ) {
     // The MacosTheme lives inside [content], so it pushes its resolved
     // appearance up through LocalNativeWindowSync — reading LocalColorScheme
@@ -112,9 +122,12 @@ fun NucleusApplicationScope.MacosWindow(
             enabled = enabled,
             focusable = focusable,
             alwaysOnTop = alwaysOnTop,
+            hiddenFromDock = hiddenFromDock,
+            minimumSize = minimumSize,
             onPreviewKeyEvent = onPreviewKeyEvent,
             onKeyEvent = onKeyEvent,
         ) {
+            val windowScope = this
             val windowActive = this.state.isActive
             // Native materials must follow the MacosTheme, not the OS setting:
             // a dark app on a light system would otherwise get a light sidebar
@@ -188,7 +201,7 @@ fun NucleusApplicationScope.MacosWindow(
                             null
                         },
                 ) {
-                    content()
+                    windowScope.content()
                 }
             }
         }
