@@ -66,3 +66,17 @@ val LocalSidebarGlassRegionFactory = compositionLocalOf<((Dp) -> Modifier)?> { n
  * Provided by `MacosWindow`; `null` when there is no native window to sync.
  */
 val LocalNativeWindowSync = compositionLocalOf<((isDark: Boolean, background: Color) -> Unit)?> { null }
+
+/**
+ * Horizontal inset for the window controls sitting on the TRAILING edge of
+ * the title bar — the minimize / maximize / close buttons on Windows and
+ * Linux, which Nucleus draws inside the Compose surface.
+ *
+ * Provided by the platform window composable (e.g. `MacosWindow`) with the
+ * measured width of the button strip, so [Scaffold] can keep its toolbar
+ * clear of them. Stays [Dp.Unspecified] on macOS, where the controls are
+ * native AppKit traffic lights on the leading edge (see
+ * [LocalWindowControlInset]).
+ */
+val LocalWindowControlTrailingInset = compositionLocalOf { Dp.Unspecified }
+

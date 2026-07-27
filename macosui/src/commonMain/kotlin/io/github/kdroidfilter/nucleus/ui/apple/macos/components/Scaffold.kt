@@ -382,12 +382,21 @@ fun Scaffold(
                     saturation = 1.05f
                 }
 
+                // Windows / Linux draw their caption buttons inside the
+                // Compose surface, on the trailing edge of the title bar —
+                // the very edge this toolbar ends at. Reserve their measured
+                // width so app content never lands underneath them.
+                val trailingControlInset = LocalWindowControlTrailingInset.current
+                val toolbarEndPadding =
+                    if (trailingControlInset != Dp.Unspecified) trailingControlInset else 0.dp
+
                 CompositionLocalProvider(LocalToolbarGlassState provides rootLiquidState) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.TopStart)
-                            .then(titleBarGlassModifier),
+                            .then(titleBarGlassModifier)
+                            .padding(end = toolbarEndPadding),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         if (managedToggle) {
@@ -403,8 +412,18 @@ fun Scaffold(
                                     shrinkTowards = Alignment.Start,
                                 ) + fadeOut(tween(durationMillis = 100, easing = FastOutSlowInEasing)),
                             ) {
+                                // Keep a breathing gap after the platform
+                                // window controls rather than butting the
+                                // toggle straight against the macOS traffic
+                                // lights (or the window edge where the
+                                // controls sit on the other side).
                                 val windowControlInset = LocalWindowControlInset.current
-                                val startPadding = if (windowControlInset != Dp.Unspecified) windowControlInset else 12.dp
+                                val startPadding =
+                                    if (windowControlInset != Dp.Unspecified) {
+                                        windowControlInset + SidebarToggleGap
+                                    } else {
+                                        SidebarToggleEdgePadding
+                                    }
                                 Box(modifier = Modifier.padding(start = startPadding)) {
                                     SidebarButton(onClick = toggleSidebar)
                                 }
@@ -419,3 +438,9 @@ fun Scaffold(
         }
     }
 }
+
+/** Gap between the platform window controls and the sidebar toggle. */
+private val SidebarToggleGap = 8.dp
+
+/** Leading padding of the sidebar toggle when no window controls precede it. */
+private val SidebarToggleEdgePadding = 20.dp
