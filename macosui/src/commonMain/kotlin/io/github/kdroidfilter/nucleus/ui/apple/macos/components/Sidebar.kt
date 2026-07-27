@@ -299,6 +299,10 @@ fun Sidebar(
                         null -> Modifier.macosGlassMaterial(
                             shape = sidebarContentShape,
                             materialSize = GlassMaterialSize.Large,
+                            // The sidebar draws its own outer shadow above; the
+                            // material fill is translucent, so a second shadow
+                            // behind it would show through as an inner halo.
+                            shadow = false,
                         )
                         else -> glassRegion(20.dp)
                     },

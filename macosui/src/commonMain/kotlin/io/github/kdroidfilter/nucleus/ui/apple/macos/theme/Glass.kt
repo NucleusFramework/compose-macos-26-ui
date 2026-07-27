@@ -279,12 +279,17 @@ fun Modifier.macosGlass(
  * @param shape The clipping shape for the material.
  * @param materialSize The material size tier (Small, Medium, Large).
  * @param tintColor Optional color overlay for custom tinting.
+ * @param shadow Whether to draw the material's drop shadow. Set to `false` when
+ *   the caller draws its own shadow: the material fill is translucent (~24% of
+ *   the backdrop shows through), so a shadow behind it bleeds into the panel as
+ *   a faint inner halo shaped like the panel itself.
  */
 @Composable
 fun Modifier.macosGlassMaterial(
     shape: Shape,
     materialSize: GlassMaterialSize,
     tintColor: Color? = null,
+    shadow: Boolean = true,
 ): Modifier {
     val isDark = LocalColorScheme.current.isDark
     val glassType = LocalGlassType.current
@@ -298,11 +303,17 @@ fun Modifier.macosGlassMaterial(
     }
 
     var result = this
-        .shadow(
-            elevation = spec.shadowBlur / 2,
-            shape = shape,
-            ambientColor = spec.edgeShadowColor,
-            spotColor = spec.shadowColor,
+        .then(
+            if (shadow) {
+                Modifier.shadow(
+                    elevation = spec.shadowBlur / 2,
+                    shape = shape,
+                    ambientColor = spec.edgeShadowColor,
+                    spotColor = spec.shadowColor,
+                )
+            } else {
+                Modifier
+            },
         )
         .clip(shape)
         .background(effectiveTint, shape)
