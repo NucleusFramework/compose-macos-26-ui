@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import io.github.fletchmckee.liquid.liquefiable
 import io.github.fletchmckee.liquid.rememberLiquidState
+import io.github.kdroidfilter.nucleus.ui.apple.macos.components.LocalNativeWindowSync
 
 /**
  * macOS UI Theme — macOS-inspired design system for Compose Multiplatform.
@@ -39,6 +40,15 @@ fun MacosTheme(
     val accentColorValue = if (darkTheme) accentColor.dark else accentColor.light
     val globalColors = if (darkTheme) GlobalColors.dark(accentColorValue) else GlobalColors.light(accentColorValue)
     val vibrantColors = if (darkTheme) VibrantColors.dark() else VibrantColors.light()
+
+    // The window composable sits ABOVE this theme, so it cannot read the
+    // scheme itself — push it up instead, so native surfaces (glass
+    // materials, traffic lights, window background) follow the app theme
+    // instead of the OS appearance.
+    val nativeWindowSync = LocalNativeWindowSync.current
+    LaunchedEffect(nativeWindowSync, colorScheme.isDark, colorScheme.background) {
+        nativeWindowSync?.invoke(colorScheme.isDark, colorScheme.background)
+    }
 
     CompositionLocalProvider(
         LocalColorScheme provides colorScheme,

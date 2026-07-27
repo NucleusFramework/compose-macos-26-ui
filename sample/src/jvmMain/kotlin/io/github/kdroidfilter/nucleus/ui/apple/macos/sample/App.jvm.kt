@@ -3,8 +3,8 @@ package io.github.kdroidfilter.nucleus.ui.apple.macos.sample
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
-import io.github.kdroidfilter.nucleus.darkmodedetector.isSystemInDarkMode
-import io.github.kdroidfilter.nucleus.systemcolor.systemAccentColor as nucleusSystemAccentColor
+import dev.nucleusframework.darkmodedetector.isSystemInDarkMode
+import dev.nucleusframework.systemcolor.systemAccentColor as nucleusSystemAccentColor
 
 @Composable
 internal actual fun BrowserNavigation(backStack: SnapshotStateList<AppNavKey>) = Unit

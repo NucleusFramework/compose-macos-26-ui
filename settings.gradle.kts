@@ -3,6 +3,12 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
+        // Local Nucleus alpha builds (published via publishToMavenLocal).
+        mavenLocal {
+            content {
+                includeGroup("dev.nucleusframework")
+            }
+        }
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
@@ -17,6 +23,12 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        // Local Nucleus alpha builds (published via publishToMavenLocal).
+        mavenLocal {
+            content {
+                includeGroup("dev.nucleusframework")
+            }
+        }
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
@@ -32,4 +44,4 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-include(":decorated-window", ":wallpaper-color", ":macosui", ":macosui-icons", ":macosui-icons-extended", ":macos-markdown", ":sample", ":gallery-annotations", ":gallery-ksp")
+include(":macosui", ":macosui-icons", ":macosui-icons-extended", ":macos-markdown", ":sample", ":gallery-annotations", ":gallery-ksp")

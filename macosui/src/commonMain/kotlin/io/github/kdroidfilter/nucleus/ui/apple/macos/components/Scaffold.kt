@@ -159,10 +159,15 @@ fun Scaffold(
         Color.Transparent
     }
 
+    // With a native sidebar material (Nucleus windowGlassRegion), the window
+    // area under the sidebar must stay unpainted so the wallpaper-tinted
+    // system material shows through; the content area paints its own
+    // containerColor (see the liquefiable box below).
+    val nativeSidebarGlass = LocalSidebarGlassRegionFactory.current != null
     Row(
         modifier = modifier
             .fillMaxSize()
-            .background(containerColor),
+            .then(if (nativeSidebarGlass) Modifier else Modifier.background(containerColor)),
     ) {
         // ---- Sidebar (full height, side-by-side with the title bar) ----
         if (sidebar != null) {

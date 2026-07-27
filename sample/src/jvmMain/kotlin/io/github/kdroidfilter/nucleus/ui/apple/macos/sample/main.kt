@@ -3,10 +3,10 @@ package io.github.kdroidfilter.nucleus.ui.apple.macos.sample
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.window.application
+import dev.nucleusframework.application.nucleusApplication
 import io.github.kdroidfilter.nucleus.ui.apple.macos.window.MacosWindow
 
-fun main() = application {
+fun main() = nucleusApplication {
     MacosWindow(
         onCloseRequest = ::exitApplication,
         title = "macosui",

@@ -259,6 +259,9 @@ fun Sidebar(
         modifier = modifier
             .width(animatedWidth)
             .fillMaxHeight()
+            // Native apps let the sidebar background drag the window;
+            // interactive children opt out by consuming the press.
+            .then(LocalWindowDragAreaModifier.current)
             .clipToBounds(),
     ) {
         Column(
@@ -288,9 +291,17 @@ fun Sidebar(
                         }
                     }
                 }
-                .macosGlassMaterial(
-                    shape = sidebarContentShape,
-                    materialSize = GlassMaterialSize.Large,
+                .then(
+                    // Native wallpaper-tinted material when the windowing
+                    // layer provides it (Nucleus Tao on macOS); Compose-drawn
+                    // approximation elsewhere. 20.dp = shapes.extraLarge.
+                    when (val glassRegion = LocalSidebarGlassRegionFactory.current) {
+                        null -> Modifier.macosGlassMaterial(
+                            shape = sidebarContentShape,
+                            materialSize = GlassMaterialSize.Large,
+                        )
+                        else -> glassRegion(20.dp)
+                    },
                 )
                 .background(inactiveOverlay, sidebarContentShape)
                 .border(1.dp, sidebarBorderColor, sidebarContentShape),

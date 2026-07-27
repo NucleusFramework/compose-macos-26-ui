@@ -132,6 +132,7 @@ private fun TitleBarContent(
             modifier = modifier
                 .fillMaxWidth()
                 .height(height.dp)
+                .then(LocalWindowDragAreaModifier.current)
                 .then(bgModifier)
                 .then(
                     if (showBorder) {

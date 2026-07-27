@@ -14,7 +14,7 @@ androidx-nav3 = "1.1.0-alpha04"
 navigation3Browser = "0.3.1"
 androidx-testExt = "1.3.0"
 composeHotReload = "1.0.0"
-composeMultiplatform = "1.11.0-alpha04"
+composeMultiplatform = "1.11.1"
 compose-rules = "0.5.6"
 detekt = "1.23.8"
 highlights = "1.1.0"
@@ -26,13 +26,15 @@ kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1"
 ksp = "2.3.1"
 multiplatformMarkdownRenderer = "0.39.2"
-nucleus = "1.4.7"
+nucleus = "2.0.0-alpha-202607270845"
 
 [libraries]
-nucleus-core-runtime = { module = "io.github.kdroidfilter:nucleus.core-runtime", version.ref = "nucleus" }
-nucleus-darkmode-detector = { module = "io.github.kdroidfilter:nucleus.darkmode-detector", version.ref = "nucleus" }
-nucleus-system-color = { module = "io.github.kdroidfilter:nucleus.system-color", version.ref = "nucleus" }
-nucleus-decorated-window-jni = { module = "io.github.kdroidfilter:nucleus.decorated-window-jni", version.ref = "nucleus" }
+nucleus-core-runtime = { module = "dev.nucleusframework:nucleus.core-runtime", version.ref = "nucleus" }
+nucleus-darkmode-detector = { module = "dev.nucleusframework:nucleus.darkmode-detector", version.ref = "nucleus" }
+nucleus-system-color = { module = "dev.nucleusframework:nucleus.system-color", version.ref = "nucleus" }
+nucleus-decorated-window-tao = { module = "dev.nucleusframework:nucleus.decorated-window-tao", version.ref = "nucleus" }
+nucleus-graalvm-runtime = { module = "dev.nucleusframework:nucleus.graalvm-runtime", version.ref = "nucleus" }
+nucleus-application = { module = "dev.nucleusframework:nucleus.nucleus-application", version.ref = "nucleus" }
 kotlin-math = { module = "dev.romainguy:kotlin-math", version.ref = "kotlinMath" }
 liquid = { module = "io.github.fletchmckee.liquid:liquid", version.ref = "liquid" }
 highlights = { module = "dev.snipme:highlights", version.ref = "highlights" }
@@ -65,6 +67,7 @@ multiplatform-markdown-renderer = { module = "com.mikepenz:multiplatform-markdow
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
+nucleus = { id = "dev.nucleusframework", version.ref = "nucleus" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }

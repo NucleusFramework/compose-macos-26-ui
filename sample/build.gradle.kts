@@ -1,4 +1,4 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import dev.nucleusframework.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.nucleus)
 }
 
 kotlin {
@@ -76,6 +77,10 @@ kotlin {
             implementation(libs.nucleus.core.runtime)
             implementation(libs.nucleus.darkmode.detector)
             implementation(libs.nucleus.system.color)
+            // Ships the L1 GraalVM reachability metadata, the font
+            // substitutions and the META-INF/services globs the native image
+            // needs (without it: "platform encoding not initialized").
+            implementation(libs.nucleus.graalvm.runtime)
         }
         webMain.dependencies {
             implementation(libs.navigation3.browser)
@@ -128,41 +133,20 @@ android {
     }
 }
 
-compose.desktop {
-    application {
-        mainClass = "io.github.kdroidfilter.nucleus.ui.apple.macos.sample.MainKt"
+// Nucleus packaging DSL: `run` automatically patches the JVM for macOS
+// SDK 26.0 (Liquid Glass) — replaces the old patchJvm/runLiquidGlass hack.
+nucleus.application {
+    mainClass = "io.github.kdroidfilter.nucleus.ui.apple.macos.sample.MainKt"
 
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "io.github.kdroidfilter.nucleus.ui.apple.macos.sample"
-            packageVersion = "1.0.0"
-        }
+    nativeDistributions {
+        targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+        packageName = "io.github.kdroidfilter.nucleus.ui.apple.macos.sample"
+        packageVersion = "1.0.0"
     }
-}
 
-// Launches the sample app with a patched JVM claiming macOS SDK 26.0,
-// enabling Liquid Glass window decorations.
-val patchJvm by tasks.registering(Exec::class) {
-    group = "compose desktop"
-    description = "Patch the JVM binary for macOS SDK 26.0 (Liquid Glass)"
-    commandLine("bash", rootProject.file("scripts/run-liquidglass.sh").absolutePath, "-version")
-    // The script is idempotent and caches its output
-    outputs.upToDateWhen { false }
-}
-
-tasks.register<JavaExec>("runLiquidGlass") {
-    group = "compose desktop"
-    description = "Run the sample app with Liquid Glass enabled (macOS SDK 26.0 spoof)"
-
-    val jvmTarget = kotlin.jvm().compilations.getByName("main")
-    dependsOn(jvmTarget.compileTaskProvider, patchJvm)
-
-    mainClass.set("io.github.kdroidfilter.nucleus.ui.apple.macos.sample.MainKt")
-    classpath = jvmTarget.output.allOutputs + jvmTarget.runtimeDependencyFiles!!
-
-    val patchedJava = File(
-        System.getProperty("user.home"),
-        "Library/Caches/macosui/patched-jvm/bin/java",
-    )
-    executable = patchedJava.absolutePath
+    graalvm {
+        isEnabled = true
+        javaLanguageVersion = 25
+        imageName = "macosui-sample"
+    }
 }
