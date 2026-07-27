@@ -42,6 +42,19 @@ val LocalTitleBarRevalidate = compositionLocalOf<(() -> Unit)?> { null }
 val LocalWindowDragAreaModifier = compositionLocalOf<Modifier> { Modifier }
 
 /**
+ * Modifier that opts a component out of the surrounding window drag area
+ * (Nucleus' `Modifier.noWindowDrag`).
+ *
+ * A drag area treats an unconsumed press as "move the window"; gesture
+ * detectors that only claim the pointer once it moves — scrollbars, sliders,
+ * resize handles — must opt out explicitly or the window starts moving under
+ * them. Applied by components that sit inside a draggable surface.
+ *
+ * Defaults to [Modifier] (no-op) on platforms without window chrome.
+ */
+val LocalNoWindowDragModifier = compositionLocalOf<Modifier> { Modifier }
+
+/**
  * Factory for a modifier that renders the NATIVE wallpaper-tinted sidebar
  * material behind a component (Nucleus' `Modifier.windowGlassRegion`,
  * backed by a hosted `NSSplitViewController` — the exact System Settings

@@ -34,10 +34,12 @@ import dev.nucleusframework.window.WindowControls
 import dev.nucleusframework.window.WindowGlassRegionKind
 import dev.nucleusframework.window.WindowScaffold
 import dev.nucleusframework.window.macOSLargeCornerRadius
+import dev.nucleusframework.window.noWindowDrag
 import dev.nucleusframework.window.styling.LocalDecoratedWindowStyle
 import dev.nucleusframework.window.windowDragArea
 import dev.nucleusframework.window.windowGlassRegion
 import io.github.kdroidfilter.nucleus.ui.apple.macos.components.LocalNativeWindowSync
+import io.github.kdroidfilter.nucleus.ui.apple.macos.components.LocalNoWindowDragModifier
 import io.github.kdroidfilter.nucleus.ui.apple.macos.components.LocalSidebarGlassRegionFactory
 import io.github.kdroidfilter.nucleus.ui.apple.macos.components.LocalTitleBarRevalidate
 import io.github.kdroidfilter.nucleus.ui.apple.macos.components.LocalWindowControlInset
@@ -187,6 +189,7 @@ fun NucleusApplicationScope.MacosDecoratedWindow(
                     LocalWindowActive provides windowActive,
                     LocalNativeWindowSync provides nativeWindowSync,
                     LocalWindowDragAreaModifier provides Modifier.windowDragArea(),
+                    LocalNoWindowDragModifier provides Modifier.noWindowDrag(),
                     // macOS only: elsewhere the factory stays null so the
                     // Sidebar keeps its Compose-drawn material fallback.
                     LocalSidebarGlassRegionFactory provides

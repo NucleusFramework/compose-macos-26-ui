@@ -283,6 +283,10 @@ private fun ScrollbarImpl(
             .then(
                 if (isVertical) Modifier.width(trackBreadth) else Modifier.height(trackBreadth),
             )
+            // The thumb and the track only claim the pointer once it moves, so
+            // a scrollbar sitting on a window drag area (e.g. the sidebar)
+            // would drag the window instead of scrolling.
+            .then(LocalNoWindowDragModifier.current)
             .hoverable(trackInteraction)
             .pointerInput(state, isVertical, trackClickBehavior) {
                 if (trackClickBehavior == TrackClickBehavior.None) return@pointerInput
