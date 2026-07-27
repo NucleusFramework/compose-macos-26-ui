@@ -26,7 +26,7 @@ kotlinx-coroutines = "1.11.0"
 kotlinx-datetime = "0.8.0"
 ksp = "2.3.1"
 multiplatformMarkdownRenderer = "0.43.0"
-nucleus = "dev2"
+nucleus = "dev"
 
 [libraries]
 nucleus-core-runtime = { module = "dev.nucleusframework:nucleus.core-runtime", version.ref = "nucleus" }
