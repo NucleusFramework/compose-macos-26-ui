@@ -24,9 +24,9 @@ junit = "4.13.2"
 kotlin = "2.4.10"
 kotlinx-coroutines = "1.11.0"
 kotlinx-datetime = "0.8.0"
-ksp = "2.3.1"
+ksp = "2.3.10"
 multiplatformMarkdownRenderer = "0.43.0"
-nucleus = "dev"
+nucleus = "2.2.0"
 
 [libraries]
 nucleus-core-runtime = { module = "dev.nucleusframework:nucleus.core-runtime", version.ref = "nucleus" }
