@@ -6,7 +6,7 @@ A Compose Multiplatform adaptation of the native macos 26 style. This port bring
 [![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform-1.11.1-4285F4.svg?logo=jetpackcompose)](https://www.jetbrains.com/compose-multiplatform/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-[Documentation & Live Demo]([https://kdroidfilter.github.io/compose-macos-26-ui/](https://nucleusframework.github.io/compose-macos-26-ui/))
+[Documentation & Live Demo](https://kdroidfilter.github.io/compose-macos-26-ui/](https://nucleusframework.github.io/compose-macos-26-ui/)
 
 ## Features
 
