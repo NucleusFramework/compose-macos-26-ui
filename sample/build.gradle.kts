@@ -1,6 +1,19 @@
+import dev.nucleusframework.desktop.application.dsl.CompressionLevel
+import dev.nucleusframework.desktop.application.dsl.NativeImageOptimization
 import dev.nucleusframework.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+// Release builds are tag-driven: the CI exports RELEASE_VERSION=<tag>.
+val releaseVersion =
+    System
+        .getenv("RELEASE_VERSION")
+        ?.removePrefix("v")
+        ?.takeIf { it.isNotBlank() && it.first().isDigit() }
+        ?: "1.0.0"
+
+// Native installers only accept numeric versions: drop any pre-release suffix.
+val nativePackageVersion = releaseVersion.substringBefore("-")
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -133,20 +146,26 @@ android {
     }
 }
 
-// Nucleus packaging DSL: `run` automatically patches the JVM for macOS
-// SDK 26.0 (Liquid Glass) — replaces the old patchJvm/runLiquidGlass hack.
+
 nucleus.application {
     mainClass = "dev.nucleusframework.macoscompose.sample.MainKt"
 
     nativeDistributions {
-        targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-        packageName = "dev.nucleusframework.macoscompose.sample"
-        packageVersion = "1.0.0"
+        targetFormats(TargetFormat.Dmg, TargetFormat.Nsis, TargetFormat.Deb)
+        compressionLevel = CompressionLevel.Ultra
+        packageName = "macosui-sample"
+        cleanupNativeLibs = true
+        packageVersion = nativePackageVersion
+        linux {
+            debMaintainer = "Nucleus"
+            homepage = "https://nucleusframework.dev"
+        }
     }
 
     graalvm {
         isEnabled = true
         javaLanguageVersion = 25
         imageName = "macosui-sample"
+        optimization = NativeImageOptimization.SIZE
     }
 }

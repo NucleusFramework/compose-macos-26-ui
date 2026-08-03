@@ -1,0 +1,98 @@
+name: Release Gallery
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-gallery-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Gallery - ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux x64
+            os: ubuntu-latest
+            arch: amd64
+            task: packageGraalvmDeb
+          - name: macOS ARM64
+            os: macos-latest
+            arch: arm64
+            task: packageGraalvmDmg
+          - name: Windows x64
+            os: windows-latest
+            arch: amd64
+            task: packageGraalvmNsis
+
+    env:
+      RELEASE_VERSION: ${{ github.ref_name }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Gradle runs on 17; the GraalVM 25 JDK used by native-image is
+      # downloaded by the Nucleus plugin itself.
+      - name: Setup Nucleus (GraalVM)
+        uses: NucleusFramework/Nucleus/.github/actions/setup-nucleus@v2.2.0
+        with:
+          java-version: '17'
+          graalvm: 'true'
+          setup-gradle: 'true'
+
+      - name: Build native package
+        # GraalVM CE is resolved through the GitHub releases API; authenticate to
+        # avoid the 60/hour anonymous limit shared across hosted runners.
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./gradlew :sample:${{ matrix.task }} -PnativeMarch=compatibility --no-daemon --stacktrace
+
+      - name: Upload release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets-${{ runner.os }}-${{ matrix.arch }}
+          path: sample/build/compose/binaries/**/graalvm-*/**
+          if-no-files-found: error
+
+  publish:
+    name: Publish Release
+    needs: [build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: release-assets-*
+
+      - name: Determine release type
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          if [[ "$VERSION" == *-alpha* || "$VERSION" == *-beta* ]]; then
+            echo "RELEASE_TYPE=prerelease" >> "$GITHUB_ENV"
+          else
+            echo "RELEASE_TYPE=release" >> "$GITHUB_ENV"
+          fi
+
+      - name: Publish release
+        uses: NucleusFramework/Nucleus/.github/actions/publish-release@v2.2.0
+        with:
+          artifacts-path: artifacts
+          tag: ${{ github.ref_name }}
+          release-type: ${{ env.RELEASE_TYPE }}
