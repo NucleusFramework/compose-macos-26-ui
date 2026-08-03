@@ -75,6 +75,10 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      # `gh release create` needs repo context: without a checkout it dies on
+      # "fatal: not a git repository".
+      - uses: actions/checkout@v4
+
       - name: Download all build artifacts
         uses: actions/download-artifact@v4
         with:
