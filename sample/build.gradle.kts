@@ -107,11 +107,11 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().con
 }
 
 android {
-    namespace = "io.github.kdroidfilter.nucleus.ui.apple.macos.sample"
+    namespace = "dev.nucleusframework.macoscompose.sample"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "io.github.kdroidfilter.nucleus.ui.apple.macos.sample"
+        applicationId = "dev.nucleusframework.macoscompose.sample"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -136,11 +136,11 @@ android {
 // Nucleus packaging DSL: `run` automatically patches the JVM for macOS
 // SDK 26.0 (Liquid Glass) — replaces the old patchJvm/runLiquidGlass hack.
 nucleus.application {
-    mainClass = "io.github.kdroidfilter.nucleus.ui.apple.macos.sample.MainKt"
+    mainClass = "dev.nucleusframework.macoscompose.sample.MainKt"
 
     nativeDistributions {
         targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-        packageName = "io.github.kdroidfilter.nucleus.ui.apple.macos.sample"
+        packageName = "dev.nucleusframework.macoscompose.sample"
         packageVersion = "1.0.0"
     }
 

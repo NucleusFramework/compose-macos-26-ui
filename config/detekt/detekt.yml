@@ -43,7 +43,7 @@ style:
       - 'androidx.compose.ui.unit.*'
       - 'androidx.compose.ui.text.*'
       - 'androidx.compose.animation.*'
-      - 'io.github.kdroidfilter.nucleus.ui.apple.macos.theme.*'
+      - 'dev.nucleusframework.macoscompose.theme.*'
   MaxLineLength:
     maxLineLength: 140
     excludeRawStrings: true

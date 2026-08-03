@@ -1,5 +1,0 @@
-package io.github.kdroidfilter.nucleus.ui.apple.macos.sample
-
-import androidx.compose.ui.window.ComposeUIViewController
-
-fun MainViewController() = ComposeUIViewController { App() }

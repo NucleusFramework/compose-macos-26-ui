@@ -4,8 +4,7 @@ A Compose Multiplatform adaptation of the native macos 26 style. This port bring
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-7F52FF.svg?logo=kotlin)](https://kotlinlang.org)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform-1.10.0-4285F4.svg?logo=jetpackcompose)](https://www.jetbrains.com/compose-multiplatform/)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Commercial License](https://img.shields.io/badge/License-Commercial-green.svg)](#commercial-license--20)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 [Documentation & Live Demo](https://kdroidfilter.github.io/compose-macos-26-ui/)
 
@@ -37,7 +36,7 @@ A Compose Multiplatform adaptation of the native macos 26 style. This port bring
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.kdroidfilter:compose-macos-ui:<version>")
+            implementation("dev.nucleusframework:compose-macos-ui:<version>")
         }
     }
 }
@@ -46,7 +45,7 @@ kotlin {
 ### 2. Wrap your app with MacosTheme
 
 ```kotlin
-import io.github.kdroidfilter.nucleus.ui.apple.macos.theme.MacosTheme
+import dev.nucleusframework.macoscompose.theme.MacosTheme
 
 @Composable
 fun App() {
@@ -60,7 +59,7 @@ fun App() {
 ### 3. Use components
 
 ```kotlin
-import io.github.kdroidfilter.nucleus.ui.apple.macos.components.*
+import dev.nucleusframework.macoscompose.components.*
 
 @Composable
 fun MyApp() {
@@ -104,14 +103,4 @@ For the full component catalog, API details, and interactive demos, visit the [d
 
 ## License
 
-Compose Macos UI is available under a **dual license**:
-
-### Open Source — GPL v3
-
-Free for open-source projects. If your project is distributed under a GPL-compatible license, you can use Compose Macos UI at no cost under the terms of the [GNU General Public License v3.0](LICENSE).
-
-### Commercial License — $50
-
-For proprietary/closed-source projects, a commercial license is available for **$50** (one-time payment). This license covers usage in **up to 3 commercial projects**.
-
-To purchase a commercial license, contact me privately via [email](mailto:elyahou.hadass@gmail.com) or open an issue on the repository.
+Compose Macos UI is available under the [MIT License](LICENSE).

@@ -10,7 +10,7 @@ Add the dependency to your `build.gradle.kts`:
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.kdroidfilter:compose-macos-ui:<version>")
+            implementation("dev.nucleusframework:compose-macos-ui:<version>")
         }
     }
 }
@@ -20,10 +20,10 @@ kotlin {
 
 ```kotlin
 // Extended icon set (Lucide icons)
-implementation("io.github.kdroidfilter:compose-macos-ui-icons-extended:<version>")
+implementation("dev.nucleusframework:compose-macos-ui-icons-extended:<version>")
 
 // macOS-themed Markdown renderer
-implementation("io.github.kdroidfilter:compose-macos-ui-markdown:<version>")
+implementation("dev.nucleusframework:compose-macos-ui-markdown:<version>")
 ```
 
 ## Setup
@@ -31,8 +31,8 @@ implementation("io.github.kdroidfilter:compose-macos-ui-markdown:<version>")
 Wrap your app content with `MacosTheme`:
 
 ```kotlin
-import io.github.kdroidfilter.nucleus.ui.apple.macos.theme.MacosTheme
-import io.github.kdroidfilter.nucleus.ui.apple.macos.theme.AccentColor
+import dev.nucleusframework.macoscompose.theme.MacosTheme
+import dev.nucleusframework.macoscompose.theme.AccentColor
 
 @Composable
 fun App() {
@@ -48,8 +48,8 @@ fun App() {
 ## Your first component
 
 ```kotlin
-import io.github.kdroidfilter.nucleus.ui.apple.macos.components.PushButton
-import io.github.kdroidfilter.nucleus.ui.apple.macos.components.Text
+import dev.nucleusframework.macoscompose.components.PushButton
+import dev.nucleusframework.macoscompose.components.Text
 
 @Composable
 fun HelloNucleus() {
@@ -107,7 +107,7 @@ macOS controls come in five sizes, following the [Apple Human Interface Guidelin
 | `ExtraLarge` | Capsule | The most emphasized action on screen — hero-level buttons, full-screen landing states, first-run experiences. |
 
 ```kotlin
-import io.github.kdroidfilter.nucleus.ui.apple.macos.theme.ControlSize
+import dev.nucleusframework.macoscompose.theme.ControlSize
 
 // Scope all children to Small
 ControlSize(ControlSize.Small) {

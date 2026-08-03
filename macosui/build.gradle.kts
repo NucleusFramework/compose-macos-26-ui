@@ -20,7 +20,7 @@ val version = if (ref.startsWith("refs/tags/")) {
 
 mavenPublishing {
     coordinates(
-        groupId = "io.github.kdroidfilter",
+        groupId = "dev.nucleusframework",
         artifactId = "compose-macos-ui",
         version = version,
     )
@@ -36,8 +36,8 @@ mavenPublishing {
 
         licenses {
             license {
-                name.set("GPL-3.0")
-                url.set("https://www.gnu.org/licenses/gpl-3.0.html")
+                name.set("MIT")
+                url.set("https://opensource.org/licenses/MIT")
             }
         }
 
@@ -106,7 +106,7 @@ kotlin {
 }
 
 android {
-    namespace = "io.github.kdroidfilter.nucleus.ui.apple.macos"
+    namespace = "dev.nucleusframework.macoscompose"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
