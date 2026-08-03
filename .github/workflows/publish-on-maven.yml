@@ -3,26 +3,53 @@ name: Publish to Maven Central
 on:
   release:
     types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-maven-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   publish:
-    if: startsWith(github.event.release.tag_name, 'v')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    name: Publish libraries
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, 'v')
+    # macOS is required: the library modules declare Apple targets, whose klibs
+    # can only be built (and therefore published) on a Mac.
+    runs-on: macos-latest
+    timeout-minutes: 90
 
-      - name: Set up JDK
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
+          distribution: temurin
           java-version: '17'
-          distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v4
 
-      - name: Publish to Maven Central
-        run: ./gradlew :macosui:publishAndReleaseToMavenCentral --no-configuration-cache
+      - name: Resolve published version
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          VERSION="${REF_NAME#v}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "Refusing to publish from ref '$REF_NAME': expected a vX.Y.Z[-suffix] tag." >&2
+            exit 1
+          fi
+          echo "Publishing dev.nucleusframework:compose-macos-ui* version $VERSION"
+
+      # Root-level task: publishes every module applying the publish plugin
+      # (compose-macos-ui, -icons, -icons-extended, -markdown). Each module
+      # derives its version from GITHUB_REF.
+      - name: Publish
+        # The vanniktech publish tasks are not configuration-cache compatible.
+        run: ./gradlew publishAndReleaseToMavenCentral --no-daemon --no-configuration-cache --stacktrace
         env:
           GITHUB_REF: ${{ github.ref }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVENCENTRALUSERNAME }}
