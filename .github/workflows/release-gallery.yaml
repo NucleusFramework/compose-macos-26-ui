@@ -41,12 +41,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Gradle runs on 17; the GraalVM 25 JDK used by native-image is
-      # downloaded by the Nucleus plugin itself.
+      # Gradle runs on 21: kotlin-math ships JVM target 21 bytecode that the
+      # sample inlines, so a 17 toolchain fails to compile it. The GraalVM 25
+      # JDK used by native-image is downloaded by the Nucleus plugin itself.
       - name: Setup Nucleus (GraalVM)
         uses: NucleusFramework/Nucleus/.github/actions/setup-nucleus@v2.2.0
         with:
-          java-version: '17'
+          java-version: '21'
           graalvm: 'true'
           setup-gradle: 'true'
 
