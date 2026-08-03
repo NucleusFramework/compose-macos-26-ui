@@ -2,8 +2,8 @@
 
 A Compose Multiplatform adaptation of the native macos 26 style. This port brings the same design language to Android, iOS, Desktop, and Web through Compose Multiplatform.
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-7F52FF.svg?logo=kotlin)](https://kotlinlang.org)
-[![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform-1.10.0-4285F4.svg?logo=jetpackcompose)](https://www.jetbrains.com/compose-multiplatform/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.4.10-7F52FF.svg?logo=kotlin)](https://kotlinlang.org)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform-1.11.1-4285F4.svg?logo=jetpackcompose)](https://www.jetbrains.com/compose-multiplatform/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 [Documentation & Live Demo](https://kdroidfilter.github.io/compose-macos-26-ui/)
@@ -82,7 +82,7 @@ fun MyApp() {
                 actions = {
                     IconButton(
                         icon = Icons.Share2,
-                        onClick = { /* open https://github.com/kdroidFilter/compose-macos-26-ui */ },
+                        onClick = { /* open https://github.com/NucleusFramework/compose-macos-26-ui */ },
                         style = IconButtonStyle.Borderless,
                     )
                 },

@@ -10,7 +10,7 @@ A Kotlin Multiplatform library implementing a macOS/iOS-inspired design system u
 - **`:gallery-ksp`** — KSP processor for gallery metadata generation
 
 ## Tech Stack
-- Kotlin 2.3.x, Compose Multiplatform 1.11.x
+- Kotlin 2.4.x, Compose Multiplatform 1.11.x
 - KSP for annotation processing
 - Detekt + Compose rules for static analysis
 - No Material3 dependency — pure Compose primitives
