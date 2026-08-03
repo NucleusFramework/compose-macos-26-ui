@@ -25,7 +25,8 @@ kotlin = "2.4.10"
 kotlinx-coroutines = "1.11.0"
 kotlinx-datetime = "0.8.0"
 ksp = "2.3.10"
-multiplatformMarkdownRenderer = "0.43.0"
+# 0.42.0+ requires compileSdk 37, which AGP 8.13.2 does not support.
+multiplatformMarkdownRenderer = "0.41.0"
 nucleus = "2.2.0"
 
 [libraries]

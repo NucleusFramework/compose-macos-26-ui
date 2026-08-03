@@ -153,7 +153,7 @@ nucleus.application {
     nativeDistributions {
         targetFormats(TargetFormat.Dmg, TargetFormat.Nsis, TargetFormat.Deb)
         compressionLevel = CompressionLevel.Ultra
-        packageName = "macosui-sample"
+        packageName = "macosui-gallery"
         cleanupNativeLibs = true
         packageVersion = nativePackageVersion
         linux {
