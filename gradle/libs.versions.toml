@@ -15,7 +15,7 @@ navigation3Browser = "1.1.0"
 androidx-testExt = "1.3.0"
 composeHotReload = "1.2.0"
 composeMultiplatform = "1.11.1"
-compose-rules = "0.6.3"
+compose-rules = "0.6.4"
 detekt = "1.23.8"
 highlights = "1.1.0"
 iconsLucideCmp = "2.2.1"
@@ -27,7 +27,7 @@ kotlinx-datetime = "0.8.0"
 ksp = "2.3.10"
 # 0.42.0+ requires compileSdk 37, which AGP 8.13.2 does not support.
 multiplatformMarkdownRenderer = "0.41.0"
-nucleus = "2.4.0"
+nucleus = "2.4.7"
 
 [libraries]
 nucleus-core-runtime = { module = "dev.nucleusframework:nucleus.core-runtime", version.ref = "nucleus" }
