@@ -19,10 +19,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -275,42 +273,34 @@ private fun <T> PopupButtonMenu(
     val minMenuWidth = with(density) { anchorSize.width.toDp() }.coerceAtLeast(150.dp)
     val gapPx = with(density) { 4.dp.roundToPx() }
 
-    var containerSize by remember { mutableStateOf(IntSize.Zero) }
-    var menuSize by remember { mutableStateOf(IntSize.Zero) }
-
     val origin = placement.transformOrigin()
 
     Popup(
         onDismissRequest = onDismissRequest,
         properties = PopupProperties(focusable = true),
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .onSizeChanged { containerSize = it }
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = onDismissRequest,
-                ),
+        MenuPopupLayout(
+            calculateOffset = { windowSize, menuSize ->
+                val rawY = calculateMenuY(
+                    placement = placement,
+                    anchorY = anchorPosition.y,
+                    anchorHeight = anchorSize.height,
+                    menuHeight = menuSize.height,
+                    gapPx = gapPx,
+                )
+                IntOffset(
+                    x = anchorPosition.x.coerceIn(0, (windowSize.width - menuSize.width).coerceAtLeast(0)),
+                    y = rawY.coerceIn(0, (windowSize.height - menuSize.height).coerceAtLeast(0)),
+                )
+            },
+            modifier = Modifier.clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = onDismissRequest,
+            ),
         ) {
-            val rawY = calculateMenuY(
-                placement = placement,
-                anchorY = anchorPosition.y,
-                anchorHeight = anchorSize.height,
-                menuHeight = menuSize.height,
-                gapPx = gapPx,
-            )
-            val clampedOffset = IntOffset(
-                x = anchorPosition.x.coerceIn(0, (containerSize.width - menuSize.width).coerceAtLeast(0)),
-                y = rawY.coerceIn(0, (containerSize.height - menuSize.height).coerceAtLeast(0)),
-            )
-
             AnimatedVisibility(
                 visible = true,
-                modifier = Modifier
-                    .onSizeChanged { menuSize = it }
-                    .offset { clampedOffset },
                 enter = fadeIn(animationSpec = tween(150)) +
                         scaleIn(
                             initialScale = 0.95f,

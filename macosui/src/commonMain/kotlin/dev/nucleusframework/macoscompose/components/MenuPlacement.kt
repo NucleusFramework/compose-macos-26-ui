@@ -1,10 +1,15 @@
 package dev.nucleusframework.macoscompose.components
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.window.PopupPositionProvider
 
 /**
@@ -51,6 +56,36 @@ internal fun calculateMenuY(
     MenuPlacement.Above -> anchorY - menuHeight - gapPx
     MenuPlacement.Center -> anchorY + (anchorHeight - menuHeight) / 2
     MenuPlacement.OverlapBelow -> anchorY
+}
+
+/**
+ * Window-sized container for menus shown inside a full-window [androidx.compose.ui.window.Popup].
+ *
+ * [calculateOffset] runs during the placement pass, so both the window and the
+ * menu are already measured the first time the menu is drawn. Deriving the
+ * offset from `onSizeChanged` state instead leaves both sizes at zero for the
+ * first frame, which renders the menu at the window's top-left corner before it
+ * snaps into place.
+ *
+ * @param calculateOffset Menu position in window coordinates, given the window
+ *   size and the measured menu size.
+ */
+@Composable
+internal fun MenuPopupLayout(
+    calculateOffset: (windowSize: IntSize, menuSize: IntSize) -> IntOffset,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Layout(content = content, modifier = modifier) { measurables, constraints ->
+        val windowSize = IntSize(constraints.maxWidth, constraints.maxHeight)
+        val menuConstraints = constraints.copy(minWidth = 0, minHeight = 0)
+        val placeables = measurables.fastMap { it.measure(menuConstraints) }
+        layout(windowSize.width, windowSize.height) {
+            placeables.fastForEach { placeable ->
+                placeable.place(calculateOffset(windowSize, IntSize(placeable.width, placeable.height)))
+            }
+        }
+    }
 }
 
 /**

@@ -20,11 +20,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -56,7 +54,6 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.text.TextStyle
@@ -157,8 +154,6 @@ fun DropdownMenu(
     // Capture the anchor's window position for full-screen popup positioning
     var anchorPosition by remember { mutableStateOf(IntOffset.Zero) }
     var anchorSize by remember { mutableStateOf(IntSize.Zero) }
-    var containerSize by remember { mutableStateOf(IntSize.Zero) }
-    var menuSize by remember { mutableStateOf(IntSize.Zero) }
     Spacer(
         modifier = Modifier.onGloballyPositioned { coordinates ->
             val windowPos = coordinates.localToWindow(Offset.Zero)
@@ -177,32 +172,29 @@ fun DropdownMenu(
             onDismissRequest = onDismissRequest,
             properties = PopupProperties(focusable = true),
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .onSizeChanged { containerSize = it }
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = onDismissRequest,
-                    ),
+            MenuPopupLayout(
+                calculateOffset = { windowSize, menuSize ->
+                    val rawY = calculateMenuY(
+                        placement = placement,
+                        anchorY = anchorPosition.y,
+                        anchorHeight = anchorSize.height,
+                        menuHeight = menuSize.height,
+                        gapPx = gapPx,
+                    ) + offset.y
+                    IntOffset(
+                        x = (anchorPosition.x + offset.x)
+                            .coerceIn(0, (windowSize.width - menuSize.width).coerceAtLeast(0)),
+                        y = rawY.coerceIn(0, (windowSize.height - menuSize.height).coerceAtLeast(0)),
+                    )
+                },
+                modifier = Modifier.clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = onDismissRequest,
+                ),
             ) {
-                val rawY = calculateMenuY(
-                    placement = placement,
-                    anchorY = anchorPosition.y,
-                    anchorHeight = anchorSize.height,
-                    menuHeight = menuSize.height,
-                    gapPx = gapPx,
-                ) + offset.y
-                val clampedOffset = IntOffset(
-                    x = (anchorPosition.x + offset.x).coerceIn(0, (containerSize.width - menuSize.width).coerceAtLeast(0)),
-                    y = rawY.coerceIn(0, (containerSize.height - menuSize.height).coerceAtLeast(0)),
-                )
                 AnimatedVisibility(
                     visible = expanded,
-                    modifier = Modifier
-                        .onSizeChanged { menuSize = it }
-                        .offset { clampedOffset },
                     enter = fadeIn(tween(150)) +
                             scaleIn(
                                 initialScale = 0.95f,
