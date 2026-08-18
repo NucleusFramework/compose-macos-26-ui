@@ -16,9 +16,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -47,7 +44,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.TextStyle
@@ -56,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import dev.nucleusframework.macoscompose.components.MenuPopupLayout
 import dev.nucleusframework.macoscompose.util.isApplePlatform
 import dev.nucleusframework.macoscompose.util.isWebPlatform
 import kotlinx.coroutines.channels.Channel
@@ -157,37 +154,26 @@ private fun ContextMenuPopup(
         }
     }
 
-    var containerSize by remember { mutableStateOf(IntSize.Zero) }
-    var menuSize by remember { mutableStateOf(IntSize.Zero) }
-
     Popup(
         onDismissRequest = menuState.onDismiss,
         properties = PopupProperties(focusable = true),
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .onSizeChanged { containerSize = it }
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = menuState.onDismiss,
-                ),
-        ) {
-            val rawOffset = IntOffset(position.x.toInt(), position.y.toInt())
-            // Skip clamping until sizes are measured to avoid flashing at (0,0) on the first frame
-            val clampedOffset = if (containerSize == IntSize.Zero) {
-                rawOffset
-            } else {
+        MenuPopupLayout(
+            calculateOffset = { windowSize, menuSize ->
+                val rawOffset = IntOffset(position.x.toInt(), position.y.toInt())
                 IntOffset(
-                    x = rawOffset.x.coerceIn(0, (containerSize.width - menuSize.width).coerceAtLeast(0)),
-                    y = rawOffset.y.coerceIn(0, (containerSize.height - menuSize.height).coerceAtLeast(0)),
+                    x = rawOffset.x.coerceIn(0, (windowSize.width - menuSize.width).coerceAtLeast(0)),
+                    y = rawOffset.y.coerceIn(0, (windowSize.height - menuSize.height).coerceAtLeast(0)),
                 )
-            }
+            },
+            modifier = Modifier.clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = menuState.onDismiss,
+            ),
+        ) {
             Column(
                 modifier = Modifier
-                    .onSizeChanged { menuSize = it }
-                    .offset { clampedOffset }
                     .width(IntrinsicSize.Max)
                     .widthIn(min = 200.dp)
                     .shadow(

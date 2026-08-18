@@ -22,10 +22,8 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -50,12 +48,10 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -84,8 +80,6 @@ fun ContextMenu(
     var isOpen by remember { mutableStateOf(false) }
     var clickOffset by remember { mutableStateOf(IntOffset.Zero) }
     var anchorPosition by remember { mutableStateOf(IntOffset.Zero) }
-    var containerSize by remember { mutableStateOf(IntSize.Zero) }
-    var menuSize by remember { mutableStateOf(IntSize.Zero) }
 
     val fallbackBg = if (colors.isDark) Color(0xFF262626) else Color(0xFFFAFAFA)
     val borderColor = if (colors.isDark) Color.White.copy(alpha = 0.12f) else Color.Black.copy(alpha = 0.08f)
@@ -122,26 +116,22 @@ fun ContextMenu(
                 onDismissRequest = { isOpen = false },
                 properties = PopupProperties(focusable = true),
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .onSizeChanged { containerSize = it }
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                            onClick = { isOpen = false },
-                        ),
+                MenuPopupLayout(
+                    calculateOffset = { windowSize, menuSize ->
+                        val rawOffset = anchorPosition + clickOffset
+                        IntOffset(
+                            x = rawOffset.x.coerceIn(0, (windowSize.width - menuSize.width).coerceAtLeast(0)),
+                            y = rawOffset.y.coerceIn(0, (windowSize.height - menuSize.height).coerceAtLeast(0)),
+                        )
+                    },
+                    modifier = Modifier.clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = { isOpen = false },
+                    ),
                 ) {
-                    val rawOffset = anchorPosition + clickOffset
-                    val clampedOffset = IntOffset(
-                        x = rawOffset.x.coerceIn(0, (containerSize.width - menuSize.width).coerceAtLeast(0)),
-                        y = rawOffset.y.coerceIn(0, (containerSize.height - menuSize.height).coerceAtLeast(0)),
-                    )
                     AnimatedVisibility(
                         visible = isOpen,
-                        modifier = Modifier
-                            .onSizeChanged { menuSize = it }
-                            .offset { clampedOffset },
                         enter = fadeIn(animationSpec = tween(150)) +
                                 scaleIn(
                                     initialScale = 0.95f,
